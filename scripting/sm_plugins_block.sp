@@ -1,56 +1,74 @@
+#pragma semicolon 1
+
 #include <sourcemod>
 #include <dhooks>
 #include <sdktools>
 
-new Handle:hClientPrintf = INVALID_HANDLE;
+#pragma newdecls required
 
-public OnPluginStart()
+Handle hClientPrintf = null;
+
+public void OnPluginStart()
 {    
-    new Handle:gameconf = LoadGameConfigFile("clientprintf-hook.games");
-    if(gameconf == INVALID_HANDLE)
-    {
-        SetFailState("Failed to find clientprintf-hook.games.txt gamedata");
-    }
-    new offset = GameConfGetOffset(gameconf, "ClientPrintf");
-    if(offset == -1)
-    {
-        SetFailState("Failed to find offset for ClientPrintf");
-        CloseHandle(gameconf);
-    }
-    StartPrepSDKCall(SDKCall_Static);
-    if(!PrepSDKCall_SetFromConf(gameconf, SDKConf_Signature, "CreateInterface"))
-    {
-        SetFailState("Failed to get CreateInterface");
-        CloseHandle(gameconf);
-    }
-    
-    PrepSDKCall_AddParameter(SDKType_String, SDKPass_Pointer);
-    PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Pointer, VDECODE_FLAG_ALLOWNULL);
-    PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
-    
-    new String:identifier[64];
-    if(!GameConfGetKeyValue(gameconf, "EngineInterface", identifier, sizeof(identifier)))
-    {
-        SetFailState("Failed to get engine identifier name");
-        CloseHandle(gameconf);
-    }
-    
-    new Handle:temp = EndPrepSDKCall();
-    new Address:addr = SDKCall(temp, identifier, 0);
-    
-    CloseHandle(gameconf);
-    CloseHandle(temp);
-    
-    if(!addr) SetFailState("Failed to get engine ptr");
-    
-    hClientPrintf = DHookCreate(offset, HookType_Raw, ReturnType_Void, ThisPointer_Ignore, Hook_ClientPrintf);
-    DHookAddParam(hClientPrintf, HookParamType_Edict);
-    DHookAddParam(hClientPrintf, HookParamType_CharPtr);
-    DHookRaw(hClientPrintf, false, addr);
+	StartPlugin();
+	CreateTimer(0.3, Timer_RestartPlugin, TIMER_REPEAT);
 }
-public MRESReturn:Hook_ClientPrintf(Handle:hParams)
+
+public Action Timer_RestartPlugin(Handle timer)
 {
-	decl String:buffer[1024];
+	StartPlugin();
+}
+
+stock void StartPlugin()
+{
+	Handle gameconf = LoadGameConfigFile("clientprintf-hook.games");
+	if(gameconf == null)
+		SetFailState("Failed to find clientprintf-hook.games.txt gamedata");
+	
+	int offset = GameConfGetOffset(gameconf, "ClientPrintf");
+	if(offset == -1)
+	{
+		SetFailState("Failed to find offset for ClientPrintf");
+		delete gameconf;
+	}
+	
+	StartPrepSDKCall(SDKCall_Static);
+	
+	if(!PrepSDKCall_SetFromConf(gameconf, SDKConf_Signature, "CreateInterface"))
+	{
+		SetFailState("Failed to get CreateInterface");
+		delete gameconf;
+	}
+	
+	PrepSDKCall_AddParameter(SDKType_String, SDKPass_Pointer);
+	PrepSDKCall_AddParameter(SDKType_PlainOldData, SDKPass_Pointer, VDECODE_FLAG_ALLOWNULL);
+	PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
+	
+	char identifier[64];
+	if(!GameConfGetKeyValue(gameconf, "EngineInterface", identifier, sizeof(identifier)))
+	{
+		SetFailState("Failed to get engine identifier name");
+		delete gameconf;
+	}
+	
+	Handle temp = EndPrepSDKCall();
+	Address addr = SDKCall(temp, identifier, 0);
+	
+	delete gameconf;
+	delete temp;
+	
+	if(!addr)
+		SetFailState("Failed to get engine ptr");
+	
+	hClientPrintf = DHookCreate(offset, HookType_Raw, ReturnType_Void, ThisPointer_Ignore, Hook_ClientPrintf);
+	DHookAddParam(hClientPrintf, HookParamType_Edict);
+	DHookAddParam(hClientPrintf, HookParamType_CharPtr);
+	DHookRaw(hClientPrintf, false, addr);
+}
+
+public MRESReturn Hook_ClientPrintf(Handle hParams)
+{
+	char buffer[1024];
 	DHookGetParamString(hParams, 2, buffer, 1024);
 	if(buffer[1] == '"' && (StrContains(buffer, "\" (") != -1 || (StrContains(buffer, ".smx\" ") != -1))) 
 	{
