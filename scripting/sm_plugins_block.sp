@@ -6,12 +6,29 @@
 
 #pragma newdecls required
 
-Handle hClientPrintf = null;
+Handle g_hClientPrintf = null;
+Handle g_hTimer = null;
+
+public void OnMapStart()
+{
+	StartTimer();
+}
 
 public void OnPluginStart()
 {    
 	StartPlugin();
-	CreateTimer(0.3, Timer_RestartPlugin, TIMER_REPEAT);
+	StartTimer();
+}
+
+stock void StartTimer()
+{
+	if(g_hTimer != null)
+	{
+		CloseHandle(g_hTimer);
+		g_hTimer = null;
+	}
+		
+	g_hTimer = CreateTimer(0.3, Timer_RestartPlugin, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public Action Timer_RestartPlugin(Handle timer)
@@ -60,10 +77,10 @@ stock void StartPlugin()
 	if(!addr)
 		SetFailState("Failed to get engine ptr");
 	
-	hClientPrintf = DHookCreate(offset, HookType_Raw, ReturnType_Void, ThisPointer_Ignore, Hook_ClientPrintf);
-	DHookAddParam(hClientPrintf, HookParamType_Edict);
-	DHookAddParam(hClientPrintf, HookParamType_CharPtr);
-	DHookRaw(hClientPrintf, false, addr);
+	g_hClientPrintf = DHookCreate(offset, HookType_Raw, ReturnType_Void, ThisPointer_Ignore, Hook_ClientPrintf);
+	DHookAddParam(g_hClientPrintf, HookParamType_Edict);
+	DHookAddParam(g_hClientPrintf, HookParamType_CharPtr);
+	DHookRaw(g_hClientPrintf, false, addr);
 }
 
 public MRESReturn Hook_ClientPrintf(Handle hParams)
