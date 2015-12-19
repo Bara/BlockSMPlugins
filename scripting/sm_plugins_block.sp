@@ -24,7 +24,7 @@ stock void StartTimer()
 {
 	if(g_hTimer != null)
 	{
-		CloseHandle(g_hTimer);
+		KillTimer(g_hTimer, true);
 		g_hTimer = null;
 	}
 		
