@@ -28,7 +28,7 @@ stock void StartTimer()
 		g_hTimer = null;
 	}
 		
-	g_hTimer = CreateTimer(0.3, Timer_RestartPlugin, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	g_hTimer = CreateTimer(5.0, Timer_RestartPlugin, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public Action Timer_RestartPlugin(Handle timer)
