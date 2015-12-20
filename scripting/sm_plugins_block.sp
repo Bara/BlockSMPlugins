@@ -24,11 +24,11 @@ stock void StartTimer()
 {
 	if(g_hTimer != null)
 	{
-		KillTimer(g_hTimer);
+		delete g_hTimer;
 		g_hTimer = null;
 	}
 		
-	g_hTimer = CreateTimer(5.0, Timer_RestartPlugin, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
+	g_hTimer = CreateTimer(1.0, Timer_RestartPlugin, TIMER_REPEAT|TIMER_FLAG_NO_MAPCHANGE);
 }
 
 public Action Timer_RestartPlugin(Handle timer)
