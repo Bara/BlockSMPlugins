@@ -1,0 +1,8 @@
+"Phrases"
+{
+	"SMPlugin"
+	{
+		"en"		"This command was blocked for public viewing."
+		"de"		"Dieser Befehl wurde für die Öffentlichkeit gesperrt."
+	}
+}
