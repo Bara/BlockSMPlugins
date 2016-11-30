@@ -1,6 +1,7 @@
 #pragma semicolon 1
 
 #include <sourcemod>
+#include <sdktools>
 #include <PTaH>
 
 #pragma newdecls required
@@ -33,7 +34,7 @@ public void OnPluginStart()
 
 public Action ConsolePrint(int client, char message[512])
 {
-	if(client < 1)
+	if(client < 1 || IsFakeClient(client) || IsClientSourceTV(client))
 		return Plugin_Continue;
 	
 	if (client > 0 && client <= MaxClients && IsClientInGame(client))
@@ -60,39 +61,45 @@ public Action ConsolePrint(int client, char message[512])
 
 public Action ExecuteStringCommand(int client, char message[512]) 
 {
-	static char sMessage[512];
-	sMessage = message;
-	TrimString(sMessage);
+	if(client < 1 || IsFakeClient(client) || IsClientSourceTV(client))
+		return Plugin_Continue;
 	
-	if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
-			return Plugin_Continue;
-	
-	if(g_cBlockSM.BoolValue && StrContains(sMessage, "sm ") != -1 || StrEqual(sMessage, "sm", false))
+	if (client > 0 && client <= MaxClients && IsClientInGame(client))
 	{
-		if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > 5)
+		static char sMessage[512];
+		sMessage = message;
+		TrimString(sMessage);
+		
+		if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
+				return Plugin_Continue;
+		
+		if(g_cBlockSM.BoolValue && StrContains(sMessage, "sm ") != -1 || StrEqual(sMessage, "sm", false))
 		{
-			char sBuffer[256];
-			Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-			PrintToConsole(client, sBuffer);
-			strcopy(message, sizeof(message), sBuffer);
-			LogToFile(g_sLogs, "\"%L\" tried access to \"sm\"", client);
-			g_iTime[client] = GetTime();
+			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > 5)
+			{
+				char sBuffer[256];
+				Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
+				PrintToConsole(client, sBuffer);
+				strcopy(message, sizeof(message), sBuffer);
+				LogToFile(g_sLogs, "\"%L\" tried access to \"sm\"", client);
+				g_iTime[client] = GetTime();
+			}
+			return Plugin_Handled;
 		}
-		return Plugin_Handled;
-	}
-	
-	if(g_cBlockMeta.BoolValue && StrContains(sMessage, "meta ") != -1 || StrEqual(sMessage, "meta", false))
-	{
-		if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > 5)
+		
+		if(g_cBlockMeta.BoolValue && StrContains(sMessage, "meta ") != -1 || StrEqual(sMessage, "meta", false))
 		{
-			char sBuffer[256];
-			Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-			PrintToConsole(client, sBuffer);
-			strcopy(message, sizeof(message), sBuffer);
-			LogToFile(g_sLogs, "\"%L\" tried access to \"meta\"", client);
-			g_iTime[client] = GetTime();
+			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > 5)
+			{
+				char sBuffer[256];
+				Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
+				PrintToConsole(client, sBuffer);
+				strcopy(message, sizeof(message), sBuffer);
+				LogToFile(g_sLogs, "\"%L\" tried access to \"meta\"", client);
+				g_iTime[client] = GetTime();
+			}
+			return Plugin_Handled;
 		}
-		return Plugin_Handled;
 	}
 	
 	return Plugin_Continue; 
