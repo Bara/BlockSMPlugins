@@ -6,6 +6,8 @@
 
 #pragma newdecls required
 
+#define INTERVAL 3
+
 ConVar g_cBlockPlugins = null;
 ConVar g_cBlockSM = null;
 ConVar g_cBlockMeta = null;
@@ -34,10 +36,7 @@ public void OnPluginStart()
 
 public Action ConsolePrint(int client, char message[512])
 {
-	if(client < 1 || IsFakeClient(client) || IsClientSourceTV(client))
-		return Plugin_Continue;
-	
-	if (client > 0 && client <= MaxClients && IsClientInGame(client))
+	if (IsClientValid(client))
 	{
 		if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
 			return Plugin_Continue;
@@ -48,11 +47,11 @@ public Action ConsolePrint(int client, char message[512])
 				return Plugin_Handled;
 			else if(StrContains(message, "To see more, type \"sm plugins", false) != -1 || StrContains(message, "To see more, type \"sm exts", false) != -1)
 			{
-				char sBuffer[256];
-				Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-				strcopy(message, sizeof(message), sBuffer);
-				LogToFile(g_sLogs, "\"%L\" tried access to sm plugins/exts", client);
-				return Plugin_Changed;
+				if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
+				{
+					PrintMessage(client, "sm plugins");
+				}
+				return Plugin_Handled;
 			}
 		}
 	}
@@ -61,10 +60,7 @@ public Action ConsolePrint(int client, char message[512])
 
 public Action ExecuteStringCommand(int client, char message[512]) 
 {
-	if(client < 1 || IsFakeClient(client) || IsClientSourceTV(client))
-		return Plugin_Continue;
-	
-	if (client > 0 && client <= MaxClients && IsClientInGame(client))
+	if (IsClientValid(client))
 	{
 		static char sMessage[512];
 		sMessage = message;
@@ -75,28 +71,18 @@ public Action ExecuteStringCommand(int client, char message[512])
 		
 		if(g_cBlockSM.BoolValue && StrContains(sMessage, "sm ") != -1 || StrEqual(sMessage, "sm", false))
 		{
-			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > 5)
+			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
 			{
-				char sBuffer[256];
-				Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-				PrintToConsole(client, sBuffer);
-				strcopy(message, sizeof(message), sBuffer);
-				LogToFile(g_sLogs, "\"%L\" tried access to \"sm\"", client);
-				g_iTime[client] = GetTime();
+				PrintMessage(client, "sm");
 			}
 			return Plugin_Handled;
 		}
 		
 		if(g_cBlockMeta.BoolValue && StrContains(sMessage, "meta ") != -1 || StrEqual(sMessage, "meta", false))
 		{
-			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > 5)
+			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
 			{
-				char sBuffer[256];
-				Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-				PrintToConsole(client, sBuffer);
-				strcopy(message, sizeof(message), sBuffer);
-				LogToFile(g_sLogs, "\"%L\" tried access to \"meta\"", client);
-				g_iTime[client] = GetTime();
+				PrintMessage(client, "meta");
 			}
 			return Plugin_Handled;
 		}
@@ -104,3 +90,21 @@ public Action ExecuteStringCommand(int client, char message[512])
 	
 	return Plugin_Continue; 
 }
+
+void PrintMessage(int client, const char[] command)
+{
+	char sBuffer[256];
+	Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
+	PrintToConsole(client, sBuffer);
+	LogToFile(g_sLogs, "\"%L\" tried access to \"%s\"", client, command);
+	g_iTime[client] = GetTime();
+}
+
+bool IsClientValid(int client)
+{
+	if (client > 0 && client <= MaxClients)
+		if (IsClientInGame(client) && !IsFakeClient(client) && !IsClientSourceTV(client))
+			return true;
+	return false;
+}
+
