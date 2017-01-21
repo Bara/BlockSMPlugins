@@ -36,7 +36,7 @@ public void OnPluginStart()
 
 public Action ConsolePrint(int client, char message[512])
 {
-	if (IsClientValid(client))
+	if (IsClientConnected(client))
 	{
 		if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
 			return Plugin_Continue;
