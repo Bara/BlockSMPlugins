@@ -49,7 +49,8 @@ public Action ConsolePrint(int client, char message[512])
 			{
 				if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
 				{
-					PrintMessage(client, "sm plugins");
+					if (IsClientInGame(client))
+						PrintMessage(client, "sm plugins");
 				}
 				return Plugin_Handled;
 			}
@@ -107,4 +108,3 @@ bool IsClientValid(int client)
 			return true;
 	return false;
 }
-
