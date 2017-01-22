@@ -36,7 +36,7 @@ public void OnPluginStart()
 
 public Action ConsolePrint(int client, char message[512])
 {
-	if (IsClientValid(client))
+	if (IsClientConnected(client))
 	{
 		if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
 			return Plugin_Continue;
@@ -93,11 +93,14 @@ public Action ExecuteStringCommand(int client, char message[512])
 
 void PrintMessage(int client, const char[] command)
 {
-	char sBuffer[256];
-	Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-	PrintToConsole(client, sBuffer);
+	if (IsClientInGame(client))
+	{
+		char sBuffer[256];
+		Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
+		PrintToConsole(client, sBuffer);
+		g_iTime[client] = GetTime();
+	}
 	LogToFile(g_sLogs, "\"%L\" tried access to \"%s\"", client, command);
-	g_iTime[client] = GetTime();
 }
 
 bool IsClientValid(int client)
@@ -107,4 +110,3 @@ bool IsClientValid(int client)
 			return true;
 	return false;
 }
-
