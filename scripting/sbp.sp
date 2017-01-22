@@ -49,8 +49,7 @@ public Action ConsolePrint(int client, char message[512])
 			{
 				if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
 				{
-					if (IsClientInGame(client))
-						PrintMessage(client, "sm plugins");
+					PrintMessage(client, "sm plugins");
 				}
 				return Plugin_Handled;
 			}
@@ -94,11 +93,14 @@ public Action ExecuteStringCommand(int client, char message[512])
 
 void PrintMessage(int client, const char[] command)
 {
-	char sBuffer[256];
-	Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
-	PrintToConsole(client, sBuffer);
+	if (IsClientInGame(client))
+	{
+		char sBuffer[256];
+		Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
+		PrintToConsole(client, sBuffer);
+		g_iTime[client] = GetTime();
+	}
 	LogToFile(g_sLogs, "\"%L\" tried access to \"%s\"", client, command);
-	g_iTime[client] = GetTime();
 }
 
 bool IsClientValid(int client)
