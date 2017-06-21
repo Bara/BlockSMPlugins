@@ -69,7 +69,7 @@ public Action ExecuteStringCommand(int client, char message[512])
 		if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
 				return Plugin_Continue;
 		
-		if(g_cBlockSM.BoolValue && StrContains(sMessage, "sm ") != -1 || StrEqual(sMessage, "sm", false))
+		if(g_cBlockSM.BoolValue && StrContains(sMessage, "sm ") == 0 || StrEqual(sMessage, "sm", false))
 		{
 			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
 			{
@@ -78,7 +78,7 @@ public Action ExecuteStringCommand(int client, char message[512])
 			return Plugin_Handled;
 		}
 		
-		if(g_cBlockMeta.BoolValue && StrContains(sMessage, "meta ") != -1 || StrEqual(sMessage, "meta", false))
+		if(g_cBlockMeta.BoolValue && StrContains(sMessage, "meta ") == 0 || StrEqual(sMessage, "meta", false))
 		{
 			if(g_iTime[client] == -1 || GetTime() - g_iTime[client] > INTERVAL)
 			{
