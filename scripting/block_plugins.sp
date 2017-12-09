@@ -1,11 +1,11 @@
 #include <sourcemod>
-#include <phooks>
+#include <PTaH>
 
 char g_sLogs[PLATFORM_MAX_PATH + 1];
 
 public void OnPluginStart()
 {
-	PHook(PHook_ConsolePrint, ConsolePrint);
+	PTaH(PTaH_ConsolePrint, Hook, ConsolePrint);
 	
 	char sDate[18];
 	FormatTime(sDate, sizeof(sDate), "%y-%m-%d");
@@ -14,14 +14,14 @@ public void OnPluginStart()
 	LoadTranslations("smblockplugins.phrases");
 }
 
-public Action ConsolePrint(int client, char sMessage[192])
+public Action ConsolePrint(int iClient, char sMessage[1024])
 {
-	if(client < 1)
+	if(iClient < 1)
 		return Plugin_Continue;
 	
-	if (client > 0 && client <= MaxClients && IsClientInGame(client))
+	if (iClient > 0 && iClient <= MaxClients && IsClientInGame(iClient))
 	{
-		if (CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
+		if (CheckCommandAccess(iClient, "sm_admin", ADMFLAG_ROOT, true))
 			return Plugin_Continue;
 		
 		if(sMessage[1] == '"' && (StrContains(sMessage, "\" (") != -1 || (StrContains(sMessage, ".smx\" ") != -1)))
@@ -29,9 +29,9 @@ public Action ConsolePrint(int client, char sMessage[192])
 		else if(StrContains(sMessage, "To see more, type \"sm plugins", false) != -1 || StrContains(sMessage, "To see more, type \"sm exts", false) != -1)
 		{
 			char sBuffer[256];
-			Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", client);
+			Format(sBuffer, sizeof(sBuffer), "%T\n", "SMPlugin", iClient);
 			strcopy(sMessage, sizeof(sMessage), sBuffer);
-			LogToFile(g_sLogs, "\"%L\" tried access to sm plugins", client);
+			LogToFile(g_sLogs, "\"%L\" tried access to sm plugins", iClient);
 			return Plugin_Changed;
 		}
 	}

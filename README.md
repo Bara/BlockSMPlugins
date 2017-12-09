@@ -1,3 +1,1 @@
-PHook (Windows): ???
-
-PHook (Linux+Source): http://hlmod.ru/threads/extension-phooks.32928/
+What do you need: https://forums.alliedmods.net/showthread.php?t=289289
