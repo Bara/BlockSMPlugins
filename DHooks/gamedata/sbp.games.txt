@@ -1,0 +1,59 @@
+"Games"
+{
+	"#default"
+	{
+		"Keys"
+		{
+			"EngineInterface"	"VEngineServer021"
+		}
+		"Signatures"
+		{
+			"CreateInterface"
+			{
+				"library"		"engine"
+				"windows"		"@CreateInterface"
+				"linux"			"@CreateInterface"
+			}
+		}
+		"Offsets"
+		{
+			"ClientPrintf"
+			{
+				"windows"	"45"
+				"linux"		"45"
+			}
+		}
+	}
+	
+	"cstrike"
+	{
+		"Keys"
+		{
+			"EngineInterface"	"VEngineServer023"
+		}
+		"Offsets"
+		{
+			"ClientPrintf"
+			{
+				"windows"	"45"
+				"linux"		"45"
+			}
+		}
+	}
+	
+	"csgo"
+	{
+		"Keys"
+		{
+			"EngineInterface"	"VEngineServer023"
+		}
+		"Offsets"
+		{
+			"ClientPrintf"
+			{
+				"windows"	"46"
+				"linux"		"46"
+			}
+		}
+	}
+}
