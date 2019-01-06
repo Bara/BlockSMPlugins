@@ -4,5 +4,6 @@
 	{
 		"en"		"This command was blocked for public viewing."
 		"de"		"Dieser Befehl wurde für die Öffentlichkeit gesperrt."
+		"fr"		"Cette commande a été bloquée pour consultation du public"
 	}
 }
