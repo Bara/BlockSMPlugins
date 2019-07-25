@@ -67,8 +67,8 @@
         {
             "ClientPrintf"
             {
-                "windows"  "46"
-                "linux"    "46"
+                "windows"  "47"
+                "linux"    "47"
             }
         }
     }
