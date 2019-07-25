@@ -77,25 +77,25 @@ public void OnPluginStart()
 
 public MRESReturn Hook_ClientPrintf(Handle hParams)
 {
-	char sBuffer[1024];
-	int client = DHookGetParam(hParams, 1);
-	
-	if (client == 0)
-	{
-		return MRES_Ignored;
+    char sBuffer[1024];
+    int client = DHookGetParam(hParams, 1);
+    
+    if (client == 0)
+    {
+        return MRES_Ignored;
     }
-	
-	DHookGetParamString(hParams, 2, sBuffer, sizeof(sBuffer));
-	
-	if(sBuffer[1] == '"' && (StrContains(sBuffer, "\" (") != -1 || (StrContains(sBuffer, ".smx\" ") != -1))) 
-	{
-		DHookSetParamString(hParams, 2, "");
-		return MRES_ChangedHandled;
-	}
-	else if(StrContains(sBuffer, "To see more, type \"sm plugins") != -1)
-	{
-		if (client > 0 && IsClientInGame(client) && !IsFakeClient(client) && !IsClientSourceTV(client))
-		{
+    
+    DHookGetParamString(hParams, 2, sBuffer, sizeof(sBuffer));
+    
+    if(sBuffer[1] == '"' && (StrContains(sBuffer, "\" (") != -1 || (StrContains(sBuffer, ".smx\" ") != -1))) 
+    {
+        DHookSetParamString(hParams, 2, "");
+        return MRES_ChangedHandled;
+    }
+    else if(StrContains(sBuffer, "To see more, type \"sm plugins") != -1)
+    {
+        if (client > 0 && IsClientInGame(client) && !IsFakeClient(client) && !IsClientSourceTV(client))
+        {
             if (CheckCommandAccess(client, "sm_admin", ADMFLAG_ROOT, true))
             {
                 return MRES_Ignored;
@@ -134,8 +134,8 @@ public MRESReturn Hook_ClientPrintf(Handle hParams)
 
             LogToFile(g_sLogs, "\"%L\" tried to get the plugin list", client);
         }
-		
-		return MRES_ChangedHandled;
-	}
-	return MRES_Ignored;
+        
+        return MRES_ChangedHandled;
+    }
+    return MRES_Ignored;
 }  
