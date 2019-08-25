@@ -25,8 +25,6 @@ public void OnPluginStart()
     PTaH(PTaH_ConsolePrintPre, Hook, ConsolePrint);
     PTaH(PTaH_ExecuteStringCommandPre, Hook, ExecuteStringCommand);
     
-    LoadTranslations("sbp.phrases");
-    
     char sDate[18];
     FormatTime(sDate, sizeof(sDate), "%y-%m-%d");
     BuildPath(Path_SM, g_sLogs, sizeof(g_sLogs), "logs/sbp-%s.log", sDate);
