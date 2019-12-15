@@ -15,6 +15,15 @@ ConVar g_cAllowRootAdmin = null;
 
 char g_sLogs[PLATFORM_MAX_PATH + 1];
 
+public Plugin myinfo =
+{
+    name = "Block SM Plugins",
+    description = "",
+    author = "Bara",
+    version = "1.0.0",
+    url = "https://github.com/Bara"
+};
+
 public void OnPluginStart() 
 {
     g_cBlockPlugins = CreateConVar("sbp_block_plugins", "1", "Block \"sm plugins\" and \"sm exts\"?", _, true, 0.0, true, 1.0);

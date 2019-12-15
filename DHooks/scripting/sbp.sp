@@ -12,7 +12,7 @@ char g_sLogs[PLATFORM_MAX_PATH + 1];
 
 public Plugin myinfo =
 {
-    name = "Hide Plugin List",
+    name = "Block SM Plugins",
     description = "",
     author = "Bara",
     version = "1.0.0",
