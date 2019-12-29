@@ -72,4 +72,20 @@
             }
         }
     }
+    
+    "left4dead2"
+    {
+        "Keys"
+        {
+            "EngineInterface"    "VEngineServer022"
+        }
+        "Offsets"
+        {
+            "ClientPrintf"
+            {
+                "windows"  "46"
+                "linux"    "46"
+            }
+        }
+    }
 }
