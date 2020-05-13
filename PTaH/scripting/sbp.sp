@@ -43,7 +43,7 @@ public Action ConsolePrint(int iClient, char sMessage[1024])
 {
     if (IsClientConnected(iClient))
     {
-        if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(iClient, "sm_admin", ADMFLAG_ROOT, true))
+        if (g_cAllowRootAdmin.BoolValue && CheckCommandAccess(iClient, "sbp_admin", ADMFLAG_ROOT, true))
             return Plugin_Continue;
         
         if(g_cBlockPlugins.BoolValue)
