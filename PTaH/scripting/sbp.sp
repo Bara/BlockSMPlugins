@@ -18,7 +18,7 @@ char g_sLogs[PLATFORM_MAX_PATH + 1];
 
 public Plugin myinfo =
 {
-    name = "Block SM Plugins",
+    name = "[PTaH] Block SM Plugins",
     description = "",
     author = "Bara",
     version = "1.0.0",
