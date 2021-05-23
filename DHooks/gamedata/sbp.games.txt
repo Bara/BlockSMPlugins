@@ -88,4 +88,20 @@
             }
         }
     }
+    
+    "nmrih"
+    {
+        "Keys"
+        {
+            "EngineInterface"    "VEngineServer023"
+        }
+        "Offsets"
+        {
+            "ClientPrintf"
+            {
+                "windows"  "45"
+                "linux"    "45"
+            }
+        }
+    }
 }
