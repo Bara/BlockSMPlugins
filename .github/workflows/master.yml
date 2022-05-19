@@ -1,0 +1,36 @@
+name: Compile with SourceMod
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        SM_VERSION: [ "1.10", "1.11" ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set environment variables
+        run: |
+          echo "DHOOKS_SCRIPTING_PATH=DHooks/scripting" >> $GITHUB_ENV
+          echo "PTAH_SCRIPTING_PATH=PTaH/scripting" >> $GITHUB_ENV
+
+      - name: Setup SourcePawn Compiler ${{ matrix.SM_VERSION }}
+        uses: rumblefrog/setup-sp@master
+        with:
+          version: ${{ matrix.SM_VERSION }}
+
+      - name: Compile dhooks version
+        run: |
+          echo -e "\nCompiling sbp.sp..."
+          spcomp -E -w234 -O2 -v2 -i $includePath -i include sbp.sp
+        working-directory: ${{ env.DHOOKS_SCRIPTING_PATH }}
+      
+      - name: Compile ptah version
+        run: |
+          echo -e "\nCompiling sbp.sp..."
+          spcomp -E -w234 -O2 -v2 -i $includePath -i include sbp.sp
+        working-directory: ${{ env.PTAH_SCRIPTING_PATH }}
