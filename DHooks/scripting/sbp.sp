@@ -30,14 +30,14 @@ public void OnPluginStart()
     LoadTranslations("sbp.phrases");
 
     Handle gameconf = LoadGameConfigFile("sbp.games");
-    if(gameconf == null)
+    if (gameconf == null)
     {
         SetFailState("Failed to find sbp.games.txt gamedata");
         delete gameconf;
     }
     
     int offset = GameConfGetOffset(gameconf, "ClientPrintf");
-    if(offset == -1)
+    if (offset == -1)
     {
         SetFailState("Failed to find offset for ClientPrintf");
         delete gameconf;
@@ -45,7 +45,7 @@ public void OnPluginStart()
     
     StartPrepSDKCall(SDKCall_Static);
     
-    if(!PrepSDKCall_SetFromConf(gameconf, SDKConf_Signature, "CreateInterface"))
+    if (!PrepSDKCall_SetFromConf(gameconf, SDKConf_Signature, "CreateInterface"))
     {
         SetFailState("Failed to get CreateInterface");
         delete gameconf;
@@ -56,7 +56,7 @@ public void OnPluginStart()
     PrepSDKCall_SetReturnInfo(SDKType_PlainOldData, SDKPass_Plain);
     
     char identifier[64];
-    if(!GameConfGetKeyValue(gameconf, "EngineInterface", identifier, sizeof(identifier)))
+    if (!GameConfGetKeyValue(gameconf, "EngineInterface", identifier, sizeof(identifier)))
     {
         SetFailState("Failed to get engine identifier name");
         delete gameconf;
@@ -68,7 +68,7 @@ public void OnPluginStart()
     delete gameconf;
     delete temp;
     
-    if(!addr)
+    if (!addr)
     {
         SetFailState("Failed to get engine ptr");
     }
@@ -100,12 +100,12 @@ public MRESReturn Hook_ClientPrintf(Handle hParams)
     
     DHookGetParamString(hParams, 2, sBuffer, sizeof(sBuffer));
     
-    if(sBuffer[1] == '"' && (StrContains(sBuffer, "\" (") != -1 || (StrContains(sBuffer, ".smx\" ") != -1))) 
+    if (sBuffer[1] == '"' && (StrContains(sBuffer, "\" (") != -1 || (StrContains(sBuffer, ".smx\" ") != -1))) 
     {
         DHookSetParamString(hParams, 2, "");
         return MRES_ChangedHandled;
     }
-    else if(StrContains(sBuffer, "To see more, type \"sm plugins") != -1)
+    else if ((StrContains(sBuffer, "To see more, type \"sm plugins") != -1) || (StrContains(sBuffer, "To see more, type \"sm exts") != -1))
     {
         if (client > 0 && IsClientInGame(client) && !IsFakeClient(client) && !IsClientSourceTV(client))
         {
